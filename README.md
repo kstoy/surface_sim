@@ -2,5 +2,5 @@
 The simulation builds on numpy and scipy. The last only for the numerical solver newton.
 
 <picture>
- <img alt="A gif of the surface" src="YOUR-DEFAULT-IMAGE">
+ <img alt="A gif of the surface" src="https://github.com/kstoy/surface_sim/blob/main/demo-w-visualization.gif">
 </picture>
