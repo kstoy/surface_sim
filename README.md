@@ -9,4 +9,8 @@
 
 <p>This gif is the result of running the demo file demo-w-visualization.py. It shows the surface and the ball moving on this moving surface. Note, that the ball falls of the surface to demonstrate that in this case the z coordinate (the height) is set to -1.0. However, the rest of the system still acts as if it is on a surface that extends beyond what is shown.
 
+<picture>
+ <img alt="The path of the ball on the surface" src="https://github.com/kstoy/surface_sim/blob/main/demo.jpeg">
+</picture>
+
 <p>It also possible to run the file demo.py. This generates a file demo.dat that contains the path of the ball in x, y, and z. This data can be visualized using the demo-vis.gnu which is a Gnuplot script. The path of the ball is identical to the one shown in the gif above. 
