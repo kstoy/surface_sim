@@ -21,7 +21,9 @@ def dcatenary( x, parameters ):
 def findcatenaryparameters( l, d, h1, h2 ):   
     v = h2 - h1
 
-    if (v**2 + d**2) > l**2:
+    d_straight = sqrt(v**2 + d**2)  # straight line distance from h1 to h2 given they are d apart
+
+    if d_straight > l:
         print( "Chain too short! Minimum required length: " + str( sqrt((fabs(v)**2 + d**2)) ) )
         print( str(l) + " " + str(d) + " " + str(h1) + " " + str(h2) )
         exit()
@@ -55,7 +57,7 @@ def findcatenaryparameters( l, d, h1, h2 ):
     y1 = a*cosh( x1 / a )
     offsety = ( h1 - y1 )
 
-    # these are the parameters for a catenary curve running in the interval [0:d] where f(0)=y1 and f(d)=y2
+    # these are the parameters for a catenary curve running in the interval [0:d] where f(0)=h1 and f(d)=h2
     return( [a, offsetx, offsety] ) 
 
 # this generates a fan of p catenary curves from h_w to the catenary curve
