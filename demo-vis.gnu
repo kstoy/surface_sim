@@ -8,4 +8,4 @@ set zlabel "Z"
 
 set title "Ball path"
 
-splot "demo.dat" with points
+splot "demo.dat" with lines notitle
