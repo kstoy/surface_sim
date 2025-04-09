@@ -75,13 +75,13 @@ def calccatenarysurface( l, d, h_n, h_w, h_e, p ):
     for q in Q:
         d_q = sin( pi/3) * d / sin( 2*pi/3 - q )
         l_q = d_q*l/d
-        c  = sin(q) * d_q / sin(pi/3)  
+        c_q  = sin(q) * d_q / sin(pi/3)  
         
-        z_x1 = catenary( c, en_curve )
+        z_x1 = catenary( c_q, en_curve )
 
-        curve = findcatenaryparameters( l, d, z_x0, z_x1)
+        curve = findcatenaryparameters( l_q, d_q, z_x0, z_x1)
 
-        R = linspace( 0, d, p)
+        R = linspace( 0, d_q, p)
         for r in R:
             surfacepoints.append( (r*cos(q), r*sin(q), catenary( r, curve)))
 
