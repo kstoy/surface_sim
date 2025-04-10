@@ -1,5 +1,5 @@
 from sys import exit
-from numpy import sinh, cosh, arctanh, sqrt, fabs, pi, linspace, sin, cos, array
+from numpy import sinh, cosh, arctanh, sqrt, fabs, pi, linspace, sin, cos, array, arccos, arcsin
 from scipy.optimize import newton
 
 # This is based on the paper entitled "Catenary Curve" by Rod Deakin
@@ -62,12 +62,16 @@ def findcatenaryparameters( l, d, h1, h2 ):
 
 # this generates a fan of p catenary curves from h_w to the catenary curve
 # connecting h_e and h_n where l is the chain length and d is the distance between h_e, h_w, h_n
-def calccatenarysurface( l, d, h_n, h_w, h_e, p ):
-    en_curve = findcatenaryparameters( l, d, h_e, h_n )     # curve from east (e) to north (n)
+def calccatenarysurface( lf, d_wn, d_ne, d_ew, h_w, h_n, h_e, p ):
+    en_curve = findcatenaryparameters( lf*d_ne, d_ne, h_e, h_n )     # curve from east (e) to north (n)
 
     surfacepoints = []
 
-    Q = linspace( 0, pi/3, p) 
+    # triangle made up of sides d_wn, d_ne, and d_ew 
+    q_d_wn = arccos( (d_ew**2 + d_ne**2 - d_wn**2 ) / ( 2* d_ew * d_ne ))
+    q_d_ne = arcsin( d_ne * sin( q_d_wn ) / d_wn  )
+
+    Q = linspace( 0, q_d_ne, p) 
 
     # lower coordinate is at (0,0) 
     z_x0 = h_w
@@ -75,15 +79,17 @@ def calccatenarysurface( l, d, h_n, h_w, h_e, p ):
     surfacepoints.append( (0.0,0.0,z_x0) )
 
     for q in Q:
-        d_q = sin( pi/3) * d / sin( 2*pi/3 - q )
-        l_q = d_q*l/d
-        c_q  = sin(q) * d_q / sin(pi/3)  
+        q_d_ew = pi - q_d_wn - q    
+        d_r = d_ew * sin( q_d_wn ) / sin( q_d_ew )   # from law of sines
+        d_c = d_ew * sin( q ) / sin( q_d_ew )
+
+        l_r = d_r * lf
         
-        z_x1 = catenary( c_q, en_curve )
+        z_x1 = catenary( d_c, en_curve )
 
-        curve = findcatenaryparameters( l_q, d_q, z_x0, z_x1)
+        curve = findcatenaryparameters( l_r, d_r, z_x0, z_x1)
 
-        R = linspace( 0, d_q, p)
+        R = linspace( 0, d_r, p)
         for r in R:
             surfacepoints.append( (r*cos(q), r*sin(q), catenary( r, curve)))
 

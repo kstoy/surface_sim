@@ -9,27 +9,29 @@ import ball
 # h_w -  h_e
 
 
-H_W = 1.0        # height of the three poles west, north, east
+H_W = 1.0          # height of the three poles west, north, east
 H_N = 2.0
 H_E = 1.0
 
-L  = 4           # side length of fabric in meters
-D  = 1           # distance between poles in meters
+D_WN = 1.0         # distance between poles in meters
+D_NE = 1.0
+D_EW = 1.0       
 
+LF = 4             # side length fabric factor (e.g. 1 means the fabric is equal to distance, 4 that there is four times more)
 
-ball.set_polar( D/2-0.3, np.pi/6+0.1, 0)  #initial position of ball
-p_r, p_q, p_z = ball.update_polar(L, D, H_N, H_W, H_E)
+ball.set_polar( D_EW/2-0.3, np.pi/6+0.1, 0)  #initial position of ball
+p_r, p_q, p_z = ball.update_polar(LF, D_WN, D_NE, D_EW, H_W, H_N, H_E)
 
 start = time.time()
 
 path = []
-for step in range(200):  # in ball timestep is 0.1 so this is 20 seconds
+for step in range(150):  # in ball timestep is 0.1 so this is 20 seconds
     h_n = H_N
-    h_w = H_W + np.sin(step/10)
-    h_e = H_E - np.sin(step/10)
+    h_w = H_W - step/150*np.sin(step/10)
+    h_e = H_E + step/150*np.sin(step/10)
 
     #update ball
-    p_r, p_q, p_z = ball.update_polar(L, D, h_n, h_w, h_e )
+    p_r, p_q, p_z = ball.update_polar(LF, D_WN, D_NE, D_EW, h_w, h_n, h_e )
 
     path.append( [p_r,p_q,p_z] )
 
