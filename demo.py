@@ -1,6 +1,5 @@
 import numpy as np
 import time
-import catenary as cat
 import ball
 
 # geometry from above
@@ -27,8 +26,8 @@ start = time.time()
 path = []
 for step in range(150):  # in ball timestep is 0.1 so this is 20 seconds
     h_n = H_N
-    h_w = H_W - step/150*np.sin(step/10)
-    h_e = H_E + step/150*np.sin(step/10)
+    h_w = H_W  - step/150*np.sin(step/10)
+    h_e = H_E  + step/150*np.sin(step/10)
 
     #update ball
     p_r, p_q, p_z = ball.update_polar(LF, D_WN, D_NE, D_EW, h_w, h_n, h_e )

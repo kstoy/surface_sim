@@ -59,38 +59,3 @@ def findcatenaryparameters( l, d, h1, h2 ):
 
     # these are the parameters for a catenary curve running in the interval [0:d] where f(0)=h1 and f(d)=h2
     return( [a, offsetx, offsety] ) 
-
-# this generates a fan of p catenary curves from h_w to the catenary curve
-# connecting h_e and h_n where l is the chain length and d is the distance between h_e, h_w, h_n
-def calccatenarysurface( lf, d_wn, d_ne, d_ew, h_w, h_n, h_e, p ):
-    en_curve = findcatenaryparameters( lf*d_ne, d_ne, h_e, h_n )     # curve from east (e) to north (n)
-
-    surfacepoints = []
-
-    # triangle made up of sides d_wn, d_ne, and d_ew 
-    q_d_wn = arccos( (d_ew**2 + d_ne**2 - d_wn**2 ) / ( 2* d_ew * d_ne ))
-    q_d_ne = arcsin( d_ne * sin( q_d_wn ) / d_wn  )
-
-    Q = linspace( 0, q_d_ne, p) 
-
-    # lower coordinate is at (0,0) 
-    z_x0 = h_w
-
-    surfacepoints.append( (0.0,0.0,z_x0) )
-
-    for q in Q:
-        q_d_ew = pi - q_d_wn - q    
-        d_r = d_ew * sin( q_d_wn ) / sin( q_d_ew )   # from law of sines
-        d_c = d_ew * sin( q ) / sin( q_d_ew )
-
-        l_r = d_r * lf
-        
-        z_x1 = catenary( d_c, en_curve )
-
-        curve = findcatenaryparameters( l_r, d_r, z_x0, z_x1)
-
-        R = linspace( 0, d_r, p)
-        for r in R:
-            surfacepoints.append( (r*cos(q), r*sin(q), catenary( r, curve)))
-
-    return( array( surfacepoints ) )

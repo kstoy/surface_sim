@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import catenary as cat
+import catenarysurface as cat
 import ball
 
 # from https://www.mygeodesy.id.au/documents/Catenary%20Curve.pdf
@@ -79,4 +79,4 @@ def animate(n):
 ani = FuncAnimation(fig, animate, frames=150, interval=50, blit=True)
 
 #plt.show()   # for some odd reason the surface does not show, but the ball does
-ani.save('demo-w-visualization.gif',fps=10)
+ani.save('demo-w-visualization.mp4',fps=10)
