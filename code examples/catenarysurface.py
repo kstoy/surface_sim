@@ -34,6 +34,53 @@ def calccatenarysurface( lf, d_O2, d_12, d_O1, h_O, h_2, h_1, p ):
 
     return( np.array( surfacepoints ) )
 
+def calccatenarysurfacetrimesh( lf, d_O2, d_12, d_O1, h_O, h_2, h_1, p ):
+    curve_12 = cat.findcatenaryparameters( lf*d_12, d_12, h_1, h_2 )     # curve from 1 to 2
+
+    # triangle made up of sides d_O2, d_12, and d_O1     
+    q_1 = np.arccos( (d_O1**2 + d_12**2 - d_O2**2 ) / ( 2* d_O1 * d_12 ))
+
+    if (d_12 * np.sin( q_1 ) / d_O2 ) >= 1.0:
+        q_O = np.pi/2
+    else:
+        q_O = np.arcsin( d_12 * np.sin( q_1 ) / d_O2  )
+
+    Q = np.linspace( 0, q_O, p, endpoint=False) 
+
+    triangles = []
+
+    for q in Q:
+        q_inc = q + q_O/float(p)
+
+        q1_3 = np.pi - q_1 - q    
+        d1_O3 = d_O1 * np.sin( q_1 ) / np.sin( q1_3 )   # from law of sines
+        d1_13 = d_O1 * np.sin( q ) / np.sin( q1_3 )
+        h1_3 = cat.catenary( d1_13, curve_12 )
+        curve1_O3 = cat.findcatenaryparameters( d1_O3 * lf, d1_O3, h_O, h1_3)
+
+        q2_3 = np.pi - q_1 - q_inc    
+        d2_O3 = d_O1 * np.sin( q_1 ) / np.sin( q2_3 )   # from law of sines
+        d2_13 = d_O1 * np.sin( q_inc ) / np.sin( q2_3 )
+        h2_3 = cat.catenary( d2_13, curve_12 )
+        curve2_O3 = cat.findcatenaryparameters( d2_O3 * lf, d2_O3, h_O, h2_3)
+
+
+        for r1,r2 in np.dstack((np.linspace( 0, d1_O3, p, endpoint=False), np.linspace( 0, d2_O3, p, endpoint=False))).reshape(-1,2):
+            # add two triangles
+            r1_inc = r1+d1_O3/float(p)
+            r2_inc = r2+d2_O3/float(p)
+
+            triangles.append( (r1*np.cos(q), r1*np.sin(q), cat.catenary( r1, curve1_O3)))
+            triangles.append( (r1_inc*np.cos(q), r1_inc*np.sin(q), cat.catenary( r1_inc, curve1_O3)))
+            triangles.append( (r2*np.cos(q_inc), r2*np.sin(q_inc), cat.catenary( r2, curve2_O3)))
+
+            triangles.append( (r1_inc*np.cos(q), r1_inc*np.sin(q), cat.catenary( r1_inc, curve1_O3)))
+            triangles.append( (r2_inc*np.cos(q_inc), r2_inc*np.sin(q_inc), cat.catenary( r2_inc, curve2_O3)))
+            triangles.append( (r2*np.cos(q_inc), r2*np.sin(q_inc), cat.catenary( r2, curve2_O3)))
+
+    return( np.array( triangles ) )
+
+
 def findcurve_O3(lf, z_O, q_O, q_1, d_O1, curve_12 ):
     q_3 = np.pi - q_1 - q_O    
     d_O3 = d_O1 * np.sin( q_1 ) / np.sin( q_3 )   # from law of sines

@@ -1,5 +1,5 @@
 from sys import exit
-from numpy import sinh, cosh, arctanh, sqrt, fabs, pi, linspace, sin, cos, array, arccos, arcsin
+from numpy import sinh, cosh, arctanh, sqrt, fabs
 from scipy.optimize import newton
 
 # This is based on the paper entitled "Catenary Curve" by Rod Deakin
@@ -49,7 +49,7 @@ def findcatenaryparameters( l, d, h1, h2 ):
 
     initial_guess = d/sqrt(24)*sqrt( d / ( sqrt( l**2 - v**2 ) - d ) )      # initial guess (equation 42 of Deakin's paper)
         
-    a = fabs( newton(f, initial_guess, fprime = f_prime) )                  # find paraneter a using the Newton-Rapson method
+    a = fabs( newton(f, initial_guess, fprime = f_prime) )                  # find parameter using the Newton-Rapson method
 
     # with the a parameter known we can translate the function to match the known end points (see paper)
     x1 = a * arctanh( v / l ) - d/2                                     
