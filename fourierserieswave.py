@@ -24,3 +24,9 @@ def fourierserieswave( coeffs, x, t ):
 
     return result
 
+if __name__ == '__main__':
+    coeffs = [-0.20231698159249772 , 0.3635850772614404 , 0.4995011845697809 , -0.49618865042113486 , 0.4239889962013814 , -0.012603109458848738 ]
+
+    with open("./data/series.dat", "w") as f:
+        for x in np.linspace(0, const.P, 100):
+            print( x, " ", fourierserieswave(coeffs, x, 0), file=f )

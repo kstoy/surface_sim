@@ -2,10 +2,9 @@ from scipy.optimize import differential_evolution, OptimizeResult
 import surfacesimulation as sim
 import visualization as vis
 import constants as const
-from main import generatevisualization
 
 def fitness( fourierserieswavecoefficients ):
-    ballpath, rodspath = sim.run(  fourierserieswavecoefficients )
+    ballpath, rodspath = sim.run_1d(  fourierserieswavecoefficients )
 
     # move to the right end of surface as fast as possible
     # fitness = -( 1 - (2.0*float(len(ballpath))/const.MAXSIMULATIONSTEPS)) * (1 - ( const.D*(const.GRIDSIZEX-1) - ballpath[-1][0] ) / (const.D*(const.GRIDSIZEX-1)) )
@@ -32,7 +31,7 @@ if __name__ == '__main__':
 
     printresult( result )
 
-    ballpath, rodspath = sim.run( result.x )
+    ballpath, rodspath = sim.run_1d( result.x )
 
     vis.generategltffiles( "surfacevisualization", rodspath, ballpath )
 

@@ -7,11 +7,11 @@ import random
 def positiontoindex( position ):
     return( np.array( [int( position[0] / D ), int( position[1] / D )]))
 
-def run( fourierwavecoefficients ):
+def run_1d( fourierwavecoefficients ):
     # initial ball parameters - p position, v velocity, a acceleration
     a_ball = np.array( [ 0.0, 0.0] )
     v_ball = np.array( [ 0.0, 0.0] )
-    #p_ball = np.array( [ 2.1 + random.random()*0.8, 0.25 + random.random()*0.5] )
+    #p_ball = np.array( [ 0.1 + random.random()*0.8, 0.5] )
     p_ball = np.array( [ 0.5, 0.5 ] )
 
     # ball path
@@ -77,5 +77,3 @@ def run( fourierwavecoefficients ):
 
     return( ballpath, rodspath )
     
-
-
