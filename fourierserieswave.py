@@ -1,4 +1,5 @@
 import numpy as np
+import constants as const
 
 def fourierserieswave( coeffs, x, t ):
     """
@@ -12,14 +13,14 @@ def fourierserieswave( coeffs, x, t ):
     
     coeffs = np.asarray(coeffs)
     v = coeffs[0]
-    n_terms = (len(coeffs) - 1) // 2
+    n_terms = (len(coeffs) - 2) // 2
     x_shifted = x - v * t
-    result = 0 # a0 is 0
+    result = coeffs[1]
 
     for n in range(1, n_terms):
         a_n = coeffs[2 * n]
         b_n = coeffs[2 * n + 1]
-        result += a_n * np.cos(n * x_shifted) + b_n * np.sin(n * x_shifted)
+        result += a_n * np.cos(2*np.pi*float(n)/const.P * x_shifted) + b_n * np.sin( 2*np.pi*float(n)/const.P * x_shifted )
 
     return result
 

@@ -2,15 +2,17 @@ import numpy as np
 from constants import *
 import fourierserieswave as fsw
 import catenary as cat
+import random
 
 def positiontoindex( position ):
     return( np.array( [int( position[0] / D ), int( position[1] / D )]))
 
-def run():
+def run( fourierwavecoefficients ):
     # initial ball parameters - p position, v velocity, a acceleration
     a_ball = np.array( [ 0.0, 0.0] )
     v_ball = np.array( [ 0.0, 0.0] )
-    p_ball = np.array( [ 2.0, 0.5] )
+    #p_ball = np.array( [ 2.1 + random.random()*0.8, 0.25 + random.random()*0.5] )
+    p_ball = np.array( [ 0.5, 0.5 ] )
 
     # ball path
     ballpath = []
@@ -28,7 +30,8 @@ def run():
         for i in range(GRIDSIZEX):
             for j in range(GRIDSIZEY):
                 t = float(step)*DT
-                rods[i][j] = np.array( [float(i)* D, float(j)*D, fsw.fourierserieswave( [0.25,0.25,0.75,0.25,0.75], float(i)*D, float(step)*DT) ] )  # this is the wave function
+                rodheight = fsw.fourierserieswave( fourierwavecoefficients, float(i)*D, float(step)*DT)  # this is the wave function
+                rods[i][j] = np.array( [float(i)* D, float(j)*D, rodheight ] ) 
 
         # ball simulation
         (ball_x_index,ball_y_index) = positiontoindex( p_ball )
