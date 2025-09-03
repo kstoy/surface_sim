@@ -1,13 +1,14 @@
 import numpy as np
 from constants import *
-import fourierserieswave as fsw
+#import fourierserieswave as fsw
+import cosinewave as csw
 import catenary as cat
 import random
 
 def positiontoindex( position ):
     return( np.array( [int( position[0] / D ), int( position[1] / D )]))
 
-def run_1d( fourierwavecoefficients ):
+def run_1d( coefficients ):
     # initial ball parameters - p position, v velocity, a acceleration
     a_ball = np.array( [ 0.0, 0.0] )
     v_ball = np.array( [ 0.0, 0.0] )
@@ -20,7 +21,7 @@ def run_1d( fourierwavecoefficients ):
     # height of poles as a function of timestep
     rodspath = []
 
-    for step in range(MAXSIMULATIONSTEPS):  # in ball timestep is 0.1 so this is 20 seconds
+    for step in range(MAXSIMULATIONSTEPS): 
         # check if ball has fallen off the grid
         if p_ball[0] < 0 or p_ball[0] > D*(GRIDSIZEX-1) or p_ball[1] < 0 or p_ball[1] > D*(GRIDSIZEY-1):
             break
@@ -30,8 +31,11 @@ def run_1d( fourierwavecoefficients ):
         for i in range(GRIDSIZEX):
             for j in range(GRIDSIZEY):
                 t = float(step)*DT
-                rodheight = fsw.fourierserieswave( fourierwavecoefficients, float(i)*D, float(step)*DT)  # this is the wave function
+                rodheight = csw.cosinewave( coefficients, float(i)*D, float(step)*DT)  # this is the wave function
                 rods[i][j] = np.array( [float(i)* D, float(j)*D, rodheight ] ) 
+
+        if ( step % RECORDFRAME == 0 ): 
+            rodspath.append( rods )
 
         # ball simulation
         (ball_x_index,ball_y_index) = positiontoindex( p_ball )
@@ -48,32 +52,42 @@ def run_1d( fourierwavecoefficients ):
         cat_e = cat.findcatenaryparameters( LF, D, rod_se[2], rod_ne[2] )  
         height_w_y = cat.catenary( p_ball_local[1], cat_w )
         height_e_y = cat.catenary( p_ball_local[1], cat_e )
-        cat_we_y = cat.findcatenaryparameters( LF, D, height_w_y, height_e_y )  
+        cat_we_x = cat.findcatenaryparameters( LF, D, height_w_y, height_e_y )  
 
         cat_n = cat.findcatenaryparameters( LF, D, rod_nw[2], rod_ne[2] )  
         cat_s = cat.findcatenaryparameters( LF, D, rod_sw[2], rod_se[2] )  
-        height_n_y = cat.catenary( p_ball_local[0], cat_n )
-        height_s_y = cat.catenary( p_ball_local[0], cat_s )
-        cat_sn_y = cat.findcatenaryparameters( LF, D, height_s_y, height_n_y )  
+        height_n_x = cat.catenary( p_ball_local[0], cat_n )
+        height_s_x = cat.catenary( p_ball_local[0], cat_s )
+        cat_sn_y = cat.findcatenaryparameters( LF, D, height_n_x, height_s_x )  
 
-        grad_x = cat.dcatenary( p_ball_local[0], cat_we_y)
+        grad_x = cat.dcatenary( p_ball_local[0], cat_we_x)
         grad_y = cat.dcatenary( p_ball_local[1], cat_sn_y)
-        ball_z = cat.catenary( p_ball_local[0], cat_we_y)  + 0.1 # ball radius
+        ball_z = cat.catenary( p_ball_local[0], cat_we_x)  + 0.1 # ball radius
     
+        if ( step % RECORDFRAME == 0 ): 
+            ballpath.append( [p_ball[0],p_ball[1],ball_z] )
+
         grad = np.array( [grad_x, grad_y])
 
+        g = 9.82
+        my = 0.3
+        c1 = 1 + np.dot( grad, grad) 
+        c2 = np.sqrt( np.dot( v_ball, v_ball ) )
+
+        if ( c2>0):
+            a_ball = -g*grad/c1 -my*g*v_ball/c2
+        else:
+            a_ball = -g*grad/c1
+            
+
         # Calculate accelerations F = m*a = -m*g*sin(angle) hence a = -k*sin(angle) where k=mg
-        a_ball = - 0.1 * np.sin( np.arctan( grad ) )
+        #a_ball = - 0.1 * ( np.sin( np.arctan( grad )) + 0.2 * np.cos( np.arctan( grad ) ) )
 
         # Update velocities
         v_ball += a_ball * DT
     
         # Update positions
         p_ball += v_ball * DT
-
-        if ( step % RECORDFRAME == 0 ): 
-            rodspath.append( rods )
-            ballpath.append( [p_ball[0],p_ball[1],ball_z] )
 
     return( ballpath, rodspath )
     

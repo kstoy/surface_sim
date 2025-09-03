@@ -4,6 +4,7 @@ import pygltflib as gltf
 from constants import *
 
 def generategltffiles( filenameroot, rodspath, ballpath ):
+    print("calculating visualization..", end="")
     simsteps=len(ballpath)
 
     # generate ball visualization - points of the triangles constituting the surface of a sphere

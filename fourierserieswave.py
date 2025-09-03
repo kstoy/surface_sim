@@ -12,10 +12,11 @@ def fourierserieswave( coeffs, x, t ):
     """    
     
     coeffs = np.asarray(coeffs)
-    v = coeffs[0]
+    x0 = coeffs[0]
+    v0 = coeffs[1]
     n_terms = (len(coeffs) - 2) // 2
-    x_shifted = x - v * t
-    result = coeffs[1]
+    x_shifted = x + x0 - v0 * t
+    result = 0  # a_0 = 0 - because the default height should be 0
 
     for n in range(1, n_terms):
         a_n = coeffs[2 * n]
