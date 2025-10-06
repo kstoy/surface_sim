@@ -3,9 +3,9 @@ import catenary as cat
 import pygltflib as gltf
 from constants import *
 
-def generategltffiles( filenameroot, rodspath, ballpath ):
+def generategltffiles( filenameroot, rodsstates, ballsstates, ballradiuses, ):
     print("calculating visualization..", end="")
-    simsteps=len(ballpath)
+    simsteps=len(rodsstates)
 
     # generate ball visualization - points of the triangles constituting the surface of a sphere
     phis = np.linspace(0, np.pi, TRIANGLES, endpoint=False)      # latitude
@@ -114,8 +114,8 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
 
     trianglestrips = []
     first = True
-    for rod in rodspath:
-        atrianglestrip = generatetrianglestripsurface( rod )
+    for rods in rodsstates:
+        atrianglestrip = generatetrianglestripsurface( rods )
         if first:
             basistrianglestrip = []
             for vector in atrianglestrip:
@@ -148,11 +148,12 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
     ball_indices = np.array( np.arange(len(ball_vertices)), dtype=np.uint32)
     ball_indices_binary_blob = ball_indices.flatten().tobytes()
 
-    ball_timestamps = np.linspace(0, len(ballpath)*DT*RECORDFRAME, len(ballpath), dtype=np.float32)
+    ball_timestamps = np.linspace(0, len(ballsstates)*DT, len(ballsstates), dtype=np.float32)
     ball_timestamps_binary_blob = ball_timestamps.tobytes()
 
-    ball_positions = np.array(ballpath, dtype=np.float32)
-    ball_positions_binary_blob = ball_positions.tobytes()
+    ball_positions = np.array(ballsstates, dtype=np.float32)
+    ball_positions_transposed = ball_positions.transpose(1,0,2)
+    ball_positions_binary_blob = ball_positions_transposed.tobytes()
 
     np_weight_arrays = np.array(weightarrays, dtype=np.float32)
     weight_arrays_binary_blob = np_weight_arrays.flatten().tobytes()
@@ -173,15 +174,8 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
     gltfobj.scene = 0
     scene = gltf.Scene()
 
-    # ball
-    gltfobj.nodes.append( gltf.Node(mesh=0, scale=[ 0.1, 0.1, 0.1 ] ) ) #, translation=path[0]) )
-    scene.nodes.append( 0 )
-
-    # robot
-    gltfobj.nodes.append( gltf.Node(mesh=1, scale=[ 1.0, 1.0, 2.0 ] ) ) # somehow the triangle array is shown in 2x scale so we have to scale down
-    scene.nodes.append( 1 )
-
-
+    # add nodes
+    # camera
     camera_matrix = [
                     0.996529757976532,
                     0,
@@ -201,28 +195,26 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
                     1
                 ]
 
-    gltfobj.nodes.append( gltf.Node( camera=0, matrix=camera_matrix) )
-    scene.nodes.append( 2 )
     gltfobj.cameras.append( gltf.Camera(type="orthographic", orthographic=gltf.Orthographic( 
                     xmag = 1.0,
                     ymag = 1.0,
                     zfar= 56.84701458464913,
                     znear= 0.005684701458464913 )))
 
-    gltfobj.scenes.append( scene ) 
+    gltfobj.nodes.append( gltf.Node( camera=0, matrix=camera_matrix) )
+    scene.nodes.append( 0 )
 
-    gltfobj.animations.append(
-        gltf.Animation(
-                samplers = [
-                    gltf.AnimationSampler( input=2, interpolation="LINEAR", output=3),
-                    gltf.AnimationSampler( input=2, interpolation="LINEAR", output=6),
-                ],
-                channels = [
-                    gltf.AnimationChannel( sampler=0, target=gltf.AnimationChannelTarget(node=0,path="translation") ),
-                    gltf.AnimationChannel( sampler=1, target=gltf.AnimationChannelTarget(node=1,path="weights") ),
-                ]
-        )
-    )
+    # robot
+    gltfobj.nodes.append( gltf.Node(mesh=1, scale=[ 1.0, 1.0, 2.0 ] ) ) # somehow the triangle array is shown in 2x scale so we have to scale down
+    scene.nodes.append( 1 )
+
+    # balls
+    for idx, r in enumerate( ballradiuses, start = 2 ):
+        gltfobj.nodes.append( gltf.Node(mesh=0, scale=[ r, r, r ] ) ) 
+        scene.nodes.append( idx )
+
+    # add nodes to scene
+    gltfobj.scenes.append( scene ) 
 
     gltfobj.materials.append( 
             gltf.Material(
@@ -239,7 +231,7 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
     gltfobj.materials.append( 
         gltf.Material(
                 pbrMetallicRoughness=gltf.PbrMetallicRoughness(
-                    baseColorFactor=[0.0, 0.0, 0.0, 1.0],  # Black
+                    baseColorFactor=[0.0, 1.0, 0.0, 1.0],  # Black
                     metallicFactor=0.0,
                     roughnessFactor=1.0
                 ),
@@ -248,7 +240,7 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
         )
     )
 
-    # ball
+    # ball mesh (reused)
     gltfobj.meshes.append( 
         gltf.Mesh(
             primitives=[
@@ -261,19 +253,35 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
 
     thetargets = []
     for i in range( simsteps ):
-        thetargets.append( gltf.Attributes(POSITION=7+i) )
+        thetargets.append( gltf.Attributes(POSITION=6+i) )
 
     # surface
     gltfobj.meshes.append( 
         gltf.Mesh(
             primitives=[
                 gltf.Primitive(
-                    attributes=gltf.Attributes(POSITION=5), indices=4, material=0, mode=gltf.TRIANGLE_STRIP, targets=thetargets
+                    attributes=gltf.Attributes(POSITION=4), indices=3, material=0, mode=gltf.TRIANGLE_STRIP, targets=thetargets
                 )
             ],
             weights=weightarrays[0],            
         )
     )
+
+    # animation
+    thesamplers = []
+    # surface
+    thesamplers.append( gltf.AnimationSampler( input=2, interpolation="LINEAR", output=5) )
+    # balls
+    for i in range(6+simsteps, 6+simsteps + len(ballradiuses)):
+        thesamplers.append( gltf.AnimationSampler( input=2, interpolation="LINEAR", output=i) )
+
+    # channels
+    thechannels = []
+    thechannels.append( gltf.AnimationChannel( sampler=0, target=gltf.AnimationChannelTarget(node=1, path="weights") ) )
+    for i in range(len(ballradiuses)):
+        thechannels.append(  gltf.AnimationChannel( sampler=i+1, target=gltf.AnimationChannelTarget(node=i+2,path="translation") ) )
+
+    gltfobj.animations.append( gltf.Animation( samplers = thesamplers, channels = thechannels ) )
 
     # 0 - ball - triangle indices
     gltfobj.accessors.append( 
@@ -304,26 +312,14 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
             gltf.Accessor(
                 bufferView=4,
                 componentType=gltf.FLOAT,
-                count=len(ballpath),
+                count=len(ballsstates),
                 type=gltf.SCALAR,
-                max=[len(ballpath)*DT*RECORDFRAME],
-                min=[0],
+                max=[len(ballsstates)*DT],
+                min=[0.0],
             )
     )
 
-    # 3 - ball path - positions at above timesteps
-    gltfobj.accessors.append( 
-            gltf.Accessor(
-                bufferView=5,
-                componentType=gltf.FLOAT,
-                count=len(ballpath),
-                type=gltf.VEC3,
-                max=ball_positions.max(axis=0).tolist(),
-                min=ball_positions.min(axis=0).tolist(),
-            )
-    )
-
-    # 4 - surface indicies
+    # 3 - surface indicies
     gltfobj.accessors.append( 
         gltf.Accessor(
             bufferView=0,
@@ -335,7 +331,7 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
         )
     )
 
-    # 5 - surface vertices
+    # 4 - surface vertices
     gltfobj.accessors.append( 
             gltf.Accessor(
                 bufferView=1,
@@ -347,7 +343,7 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
             )
     )
         
-    # 6 - weights
+    # 5 - weights
     gltfobj.accessors.append( 
         gltf.Accessor(
             bufferView=6,
@@ -359,7 +355,7 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
         )
     )
 
-    # 7 and more
+    # 6 to 6 + simsteps -1
     for i in range(simsteps):
         # surface vertices
         gltfobj.accessors.append( 
@@ -373,6 +369,20 @@ def generategltffiles( filenameroot, rodspath, ballpath ):
                 min=surface_vertices[i].min(axis=0).tolist(),
             )
         )
+
+    # 6 + simsteps to 6 + simsteps + number of balls - 1
+    for i in range(len(ball_positions[0])):
+        gltfobj.accessors.append( 
+            gltf.Accessor(
+                bufferView=5,
+                componentType=gltf.FLOAT,
+                byteOffset=simsteps*3*4*i,
+                count=simsteps,
+                type=gltf.VEC3,
+                max=ball_positions_transposed[i].max(axis=0).tolist(),
+                min=ball_positions_transposed[i].min(axis=0).tolist(),
+            )
+    )
 
     # views of the data in the binary file
     gltfobj.bufferViews.append( 

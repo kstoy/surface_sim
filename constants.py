@@ -1,10 +1,10 @@
 D  = 1.0                # distance between rods in meters
 LF = 1.42 # (>sqrt(2))                # fabric length factor (e.g. 1 means the fabric is equal to distance, 4 that there is four times more)
 
-MAXSIMULATIONSTEPS = 450   # x0.1sec = 45seconds  
-DT = 0.1                # simulation time step in seconds
+MAXSIMULATIONSTEPS = 400   # x0.1sec = 45seconds  
+DT = 0.01                   # simulation time step in seconds
 
-GRIDSIZEX = 16            # poles per side - must be even so there is an odd number of modules per side (restriction from rendering)
+GRIDSIZEX = 4            # poles per side - must be even so there is an odd number of modules per side (restriction from rendering)
 GRIDSIZEY = 2
 
 TRIANGLES = 9
@@ -14,5 +14,9 @@ EXPLODE = 1.0             # used to seperate trianglestrips for debugging 1 no s
 RECORDFRAME = 2 # record every nth frame
 
 MAXCOEFF = 3
+
+NBALL = 1
+
+REPETITIONS = 1
 
 P = 2.0

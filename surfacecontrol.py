@@ -1,7 +1,7 @@
 import numpy as np
 from constants import *
 #import fourierserieswave as fsw
-import cosinewave as csw
+import cosinewavecontroller as csw
 import catenary as cat
 import random
 
@@ -24,7 +24,9 @@ def run_1d( coefficients ):
     for step in range(MAXSIMULATIONSTEPS): 
         # check if ball has fallen off the grid
         if p_ball[0] < 0 or p_ball[0] > D*(GRIDSIZEX-1) or p_ball[1] < 0 or p_ball[1] > D*(GRIDSIZEY-1):
-            break
+            ballpath.append(  ballpath[-1] )
+            rodspath.append(  rodspath[-1] )
+            continue
 
         # surface control 
         rods = np.empty( (GRIDSIZEX,GRIDSIZEY), dtype=object )
@@ -75,11 +77,10 @@ def run_1d( coefficients ):
         c2 = np.sqrt( np.dot( v_ball, v_ball ) )
 
         if ( c2>0):
-            a_ball = -g*grad/c1 -my*g*v_ball/c2
+            a_ball = -g*(grad/c1 -my*v_ball/c2)
         else:
             a_ball = -g*grad/c1
             
-
         # Calculate accelerations F = m*a = -m*g*sin(angle) hence a = -k*sin(angle) where k=mg
         #a_ball = - 0.1 * ( np.sin( np.arctan( grad )) + 0.2 * np.cos( np.arctan( grad ) ) )
 
