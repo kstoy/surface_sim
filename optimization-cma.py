@@ -3,18 +3,18 @@ import visualization as vis
 import constants as const
 import simulation as sim
 import cma 
-from numpy import fabs, inf, sum
+from numpy import fabs, inf, sum, array
 import multiprocessing
 
 def fitness( cosinewavecoefficients ):
     fitness = 0.0
 
-    _ , ballspaths, _ = sim.simulation( cosinewavecoefficients, visualization=False )
+    _ , ballspaths, _ = sim.simulation( array( cosinewavecoefficients ), visualization=False )
 
 
-    for ballpositions in ballspaths[-1]:
+    for ballpositions in ballspaths:
         #fitness += fabs( (const.D*2.5) - position[0] )
-        fitness += sum( fabs( 2.5 - ballpositions[0] )  )
+        fitness += sum( fabs( 2.5 - ballpositions[:,0] ) + fabs( 0.5 - ballpositions[:,1] ) + fabs( ballpositions[:,2] )  )
     return( fitness )
 
 def printresult( result ):
@@ -26,7 +26,7 @@ def printresult( result ):
     print( "fitness: " + str( result.fun ) )
 
 if __name__ == '__main__':
-    es = cma.CMAEvolutionStrategy( [0.0] * const.MAXCOEFF, 1.0 )
+    es = cma.CMAEvolutionStrategy( [0.0] * const.MAXCOEFF, 1.0, {'tolfun': 0.1} )
 
     #for e in cma.CMAOptions():
     #    print( str( e ) )

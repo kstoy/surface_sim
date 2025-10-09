@@ -1,7 +1,7 @@
 import numpy as np
 
 from constants import *
-from cosinewavecontroller import cosinewavecontroller as controller
+from neuralnetworkcontroller import neuralnetworkcontroller as controller
 import catenarysurface 
 
 class RodsState:

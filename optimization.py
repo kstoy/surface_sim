@@ -1,19 +1,18 @@
-from scipy.optimize import differential_evolution, OptimizeResult, minimize
+from scipy.optimize import differential_evolution, OptimizeResult
 import catenarysurface as sim
 import visualization as vis
 import constants as const
 import simulation as sim
-from numpy import fabs, inf, sum
+from numpy import fabs, inf, sum, array, inf
 
 def fitness( cosinewavecoefficients ):
     fitness = 0.0
 
-    _ , ballspaths, _ = sim.simulation( cosinewavecoefficients )
+    _ , ballspaths, _ = sim.simulation( array( cosinewavecoefficients ), visualization=False )
 
 
-    for ballpositions in ballspaths[-1]:
-        fitness += fabs( (const.D*2.5) - ballpositions[0] )
-        #fitness += sum( fabs( const.D*(const.GRIDSIZEX-1) - 0.5 - ballpositions[:,0] ) + fabs( const.D*(const.GRIDSIZEX-1) - 4.5 - ballpositions[:,1] ) + fabs( 1 - ballpositions[:,2] ))
+    for ballpositions in ballspaths:
+        fitness += sum( fabs( 2.5 - ballpositions[:,0] ) + fabs( 0.5 - ballpositions[:,1] ) + fabs( ballpositions[:,2] )  )
     return( fitness )
 
 def printresult( result ):
@@ -30,14 +29,14 @@ def thecallback(intermediate_result: OptimizeResult):
         raise StopIteration
 
 if __name__ == '__main__':
-    bounds = [(-15.0,15.0)]*const.MAXCOEFF
+    bounds = [(-100,100)]*const.MAXCOEFF
 
-    result = differential_evolution(fitness, bounds, workers=10, polish=False, updating='deferred', callback=thecallback )
+    result = differential_evolution(fitness, bounds, workers=10, polish=False, updating='deferred', callback=thecallback, tol= 0.1 )
 
     print( "Final result:")
     printresult( result )
 
-    rodspaths, ballspaths, ballsradiuses = sim.simulation( result.x )
+    rodspaths, ballspaths, ballsradiuses = sim.simulation( result.x, visualization=True )
 
     vis.generategltffiles( "surfacevisualization", rodspaths, ballspaths, ballsradiuses )
 
