@@ -11,7 +11,7 @@ class BallsState:
     Inertia (solid sphere): I = 2/5 m R^2  (scalar per ball)
     """
     def __init__(self, rodstate ):
-        rng = np.random.default_rng(3)
+        rng = np.random.default_rng()
 
         N = const.NBALL
 
@@ -22,7 +22,7 @@ class BallsState:
 
         # Dense cluster so we get ball–ball contact
         r = np.zeros((N,3), float)
-        r[:,0] = rng.uniform(0.1, 0.9, size=N)
+        r[:,0] = rng.uniform(0.1, const.GRIDSIZEX-1.1, size=N)
         r[:,1] = rng.uniform(0.1, 0.9, size=N)
 
         for i in range(N):

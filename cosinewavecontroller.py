@@ -3,7 +3,7 @@ import constants as const
 
 class cosinewavecontroller:
     def __init__(self, coeffs):
-        self.rng = np.random.default_rng(3)
+        self.rng = np.random.default_rng()
         self.coeffs = coeffs
 
     def cosinewave( self, x, t ):

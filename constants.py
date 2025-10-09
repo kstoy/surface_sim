@@ -4,7 +4,7 @@ LF = 1.42 # (>sqrt(2))                # fabric length factor (e.g. 1 means the f
 MAXSIMULATIONSTEPS = 200   # x0.1sec = 45seconds  
 DT = 0.02                   # simulation time step in seconds
 
-GRIDSIZEX = 4            # poles per side - must be even so there is an odd number of modules per side (restriction from rendering)
+GRIDSIZEX = 10            # poles per side - must be even so there is an odd number of modules per side (restriction from rendering)
 GRIDSIZEY = 2
 
 TRIANGLES = 9

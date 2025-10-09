@@ -3,7 +3,7 @@ import constants as const
 
 class neuralnetworkcontroller:
         def __init__(self, coeffs):
-            self.rng = np.random.default_rng(3)
+            self.rng = np.random.default_rng()
             self.coeffs = coeffs
 
         def sigmoid(x):
@@ -18,5 +18,5 @@ class neuralnetworkcontroller:
             w1 = np.array( self.coeffs[5:9] )
             w2 = np.array( self.coeffs[9:13] )
 
-            return( neuralnetworkcontroller.sigmoid( w13 * neuralnetworkcontroller.sigmoid( np.dot( w1, input) ) + w23 * neuralnetworkcontroller.sigmoid(  np.dot( w2, input ) ) + w33 * -1.0) )
+            return( np.clip( neuralnetworkcontroller.sigmoid( w13 * neuralnetworkcontroller.sigmoid( np.dot( w1, input) ) + w23 * neuralnetworkcontroller.sigmoid(  np.dot( w2, input ) ) + w33 * -1.0) + + const.SIGMA*self.rng.standard_normal(), 0.0, 1.0 ) ) 
         

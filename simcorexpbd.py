@@ -159,7 +159,7 @@ def step(
                     lamN_pairs[pi] = lam_new
                     ballsstate.r[i] += (dLam * wi) * n
                     ballsstate.r[j] -= (dLam * wj) * n
-                    worst_pen = max(worst_pen, -C)
+                    #worst_pen = max(worst_pen, -C)
 
         # -------- Update velocities from corrected positions --------
         ballsstate.v = (ballsstate.r - r0) / h

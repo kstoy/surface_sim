@@ -14,16 +14,14 @@ def fitness( cosinewavecoefficients ):
 
     for ballpositions in ballspaths:
         #fitness += fabs( (const.D*2.5) - position[0] )
-        fitness += sum( fabs( 2.5 - ballpositions[:,0] ) + fabs( 0.5 - ballpositions[:,1] ) + fabs( ballpositions[:,2] )  )
+        fitness += sum( fabs( 8.5 - ballpositions[:,0] ) + fabs( ballpositions[:,2] ) + fabs( 0.5 - ballpositions[:,1] ) )
     return( fitness )
 
 def printresult( result ):
-    print( "[" + str(result.x[0]), end=" ")
-    for f in result.x[1:]:
+    print( "[" + str(result[0]), end=" ")
+    for f in result[1:]:
         print( ", " + str(f), end=" " )
-    print( "]", end=" " )
-
-    print( "fitness: " + str( result.fun ) )
+    print( "]" )
 
 if __name__ == '__main__':
     es = cma.CMAEvolutionStrategy( [0.0] * const.MAXCOEFF, 1.0, {'tolfun': 0.1} )
@@ -42,11 +40,7 @@ if __name__ == '__main__':
         
     pool.close()
     es.result_pretty()
-
-    #result = differential_evolution(fitness, bounds, workers=10, polish=False, updating='deferred', callback=thecallback )
-
-    #print( "Final result:")
-    #printresult( result )
+    printresult( es.result.xbest )
 
     rodspaths, ballspaths, ballsradiuses = sim.simulation(   es.result.xbest, visualization=True )
 
