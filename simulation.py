@@ -46,14 +46,14 @@ def simulation( coeffs, visualization = True ):
 if __name__ == "__main__":
     print("simulation running without visualization...", end="")
     start = time.time()
-    rodsstates, ballsstates, ballsradiuses = simulation( [  1.08268258, 1.00004563, -0.3360156 ], visualization=False )
+    rodsstates, ballsstates, ballsradiuses = simulation( [  2.6438248610474613, 13.431899848987156, -6.7422126501257065, 14.444057341122013, -1.7242975763525634, -19.617516094223525, -10.202722516830153, -23.1695767704936, -2.034232542548068, -32.57241602377202, 10.410573050097318, -6.944904682706344, 3.560616901906224, 11.940890122375952 ], visualization=False )
     end = time.time()
     print("done")
     print("Simulation complete - time elapsed: " + str( end - start ))
 
     print("simulation running with visualization...", end="")
     start = time.time()
-    rodsstates, ballsstates, ballsradiuses = simulation( [  1.08268258, 1.00004563, -0.3360156 ], visualization=True )
+    rodsstates, ballsstates, ballsradiuses = simulation( [  2.6438248610474613, 13.431899848987156, -6.7422126501257065, 14.444057341122013, -1.7242975763525634, -19.617516094223525, -10.202722516830153, -23.1695767704936, -2.034232542548068, -32.57241602377202, 10.410573050097318, -6.944904682706344, 3.560616901906224, 11.940890122375952 ], visualization=True )
     end = time.time()
     print("done")
     print("Simulation complete - time elapsed: " + str( end - start ))
