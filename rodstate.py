@@ -36,7 +36,7 @@ class RodsState:
 
     def surfacejet( self, x, y ):
         if x < 0.0 or x > D*(GRIDSIZEX-1) or y < 0.0 or y > D*(GRIDSIZEY-1):
-            jet = np.zeros(3)
+            jet = np.array([0.0, 0.0, -2.0])
         else:
             (x_idx,y_idx) = self.positiontoindex( x, y )
 

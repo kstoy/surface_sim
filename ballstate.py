@@ -22,8 +22,8 @@ class BallsState:
 
         # Dense cluster so we get ball–ball contact
         r = np.zeros((N,3), float)
-        r[:,0] = rng.uniform(0.1, const.GRIDSIZEX-1.1, size=N)
-        r[:,1] = rng.uniform(0.1, 0.9, size=N)
+        r[:,0] = rng.uniform(0.49, 0.51, size=N)
+        r[:,1] = rng.uniform(0.49, 0.51, size=N)
 
         for i in range(N):
             z, _, _ = rodstate.surfacejet( r[i,0], r[i,1] )

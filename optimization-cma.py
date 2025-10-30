@@ -6,15 +6,16 @@ import cma
 from numpy import fabs, inf, sum, array
 import multiprocessing
 
-def fitness( cosinewavecoefficients ):
+def fitness( coeffs ):
     fitness = 0.0
 
-    _ , ballspaths, _ = sim.simulation( array( cosinewavecoefficients ), visualization=False )
+    _ , ballspaths, _ = sim.simulation( array( coeffs ), visualization=False )
 
 
     for ballpositions in ballspaths:
         #fitness += fabs( (const.D*2.5) - position[0] )
-        fitness += sum( fabs( 8.5 - ballpositions[:,0] ) + fabs( ballpositions[:,2] ) + fabs( 0.5 - ballpositions[:,1] ) )
+        startz = ballpositions[0,2]
+        fitness += sum( fabs( 3.5 - ballpositions[:,0] ) + fabs( startz - ballpositions[:,2] ) + fabs( 3.5 - ballpositions[:,1] ) )
     return( fitness )
 
 def printresult( result ):
@@ -24,7 +25,7 @@ def printresult( result ):
     print( "]" )
 
 if __name__ == '__main__':
-    es = cma.CMAEvolutionStrategy( [0.0] * const.MAXCOEFF, 1.0, {'tolfun': 0.1} )
+    es = cma.CMAEvolutionStrategy( [0.0] * const.MAXCOEFF, 1.0, {'tolfun': 0.1, 'maxfevals': 10000} )
 
     #for e in cma.CMAOptions():
     #    print( str( e ) )

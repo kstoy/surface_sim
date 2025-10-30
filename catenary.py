@@ -32,11 +32,14 @@ def findcatenaryparameters( l, d, h1, h2 ):
     # the purpose of the follow section is to find the parameter a.
     # Unfortunately, it is not possible to isolate a in the equation below and
     # therefore we have to find it numerically here using the Newton-Rapson method
-    def f( a:float ):
-        return( 2*a*sinh(d/(2*a)) - sqrt( l**2 - v**2 ) )
+    #def f( a:float ):
+    #    return( 2*a*sinh(d/(2*a)) - sqrt( l**2 - v**2 ) )
 
-    def f_prime( a:float ):
-        return( 2*(sinh(d/(2*a))-d/(2*a)*cosh(d/(2*a))) )
+    #def f_prime( a:float ):
+    #    return( 2*(sinh(d/(2*a))-d/a*cosh(d/(2*a))) )
+    
+    #def f_doubleprime( a:float ):
+    #    return( d * cosh(d / (2 * a)) / a**2 + d**2 * sinh(d / (2 * a)) / a**3 )
 
     #   alternative set of equations - same results as above - maybe useful if faster - not tested for performance
     #    def f( a:float ):
@@ -47,9 +50,11 @@ def findcatenaryparameters( l, d, h1, h2 ):
     #        q = arctanh( v/L )
     #        return( 2*cosh(q)*(sinh(D/(2*a))-D/(2*a)*cosh(D/(2*a))) )
 
-    initial_guess = d/sqrt(24)*sqrt( d / ( sqrt( l**2 - v**2 ) - d ) )      # initial guess (equation 42 of Deakin's paper)
+    a = d/sqrt(24)*sqrt( d / ( sqrt( l**2 - v**2 ) - d ) )      # initial guess (equation 42 of Deakin's paper)
         
-    a = fabs( newton(f, initial_guess, fprime = f_prime) )                  # find parameter using the Newton-Rapson method
+    #a = fabs( newton(f, initial_guess, fprime = f_prime, tol=0.01 ) )       # fprime2 = f_doubleprime), find parameter using the Newton-Rapson method
+
+    #print( initial_guess - a )
 
     # with the a parameter known we can translate the function to match the known end points (see paper)
     x1 = a * arctanh( v / l ) - d/2                                     
