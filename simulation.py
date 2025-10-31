@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     print("simulation running with visualization...", end="")
     start = time.time()
-    rodsstates, ballsstates, ballsradiuses = simulation( [1.08734603, 0.6915153, 2.26898423, -3.56079092, -2.06089341, 3.22276934, -0.9248974,  -0.58937354, -2.94966111, -2.28199932,  0.45932872,  1.18917908, -0.52763791, -0.11665944], visualization=True )
+    rodsstates, ballsstates, ballsradiuses = simulation( [0.04503895702597731 , 7.683522393094351 , 4.736916878368619 , 4.5877588162934915 , 1.9889974763801117 , 0.48310720429130705 , 22.17177305664314 , 0.550845706248993 , 1.3991082573092521 , -17.4980038495596 , -0.11203820166594919 , 4.578667237144929 , -3.0151594469383847 , -11.705988503439162 , 9.075713306104888 ], visualization=True )
     end = time.time()
     print("done")
     print("Simulation complete - time elapsed: " + str( end - start ))
