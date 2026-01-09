@@ -11,9 +11,9 @@ class neuralnetworkcontroller:
 
         def update( self, x, y, timestep ):
             w, x0, w13, w23, w33 = self.coeffs[0:5]
-            t = float( timestep ) * const.DT
+            t = 2*np.pi*float( timestep ) / const.MAXSIMULATIONSTEPS
 
-            input = np.array( [(x / (const.D*const.GRIDSIZEX-1) - 0.5)*2, (y / (const.D*const.GRIDSIZEX-1) - 0.5)*2, (t / (const.MAXSIMULATIONSTEPS*const.DT) - 0.5)*2, (np.cos( w*t + x0 )/2 + 0.5), -1.0] )
+            input = np.array( [(x / (const.D*const.GRIDSIZEX-1) - 0.5)*2, (y / (const.D*const.GRIDSIZEX-1) - 0.5)*2, (t / (const.MAXSIMULATIONSTEPS*const.DT) - 0.5)*2, np.cos( t + x0 ), -1.0] ) #w*t
 
             w1 = np.array( self.coeffs[5:10] )
             w2 = np.array( self.coeffs[10:15] )

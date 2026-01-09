@@ -6,11 +6,13 @@ class cosinewavecontroller:
         self.rng = np.random.default_rng()
         self.coeffs = coeffs
 
-    def cosinewave( self, x, t ):
-        v0, a, b = self.coeffs
-        x_shifted = x - v0*t
+    def cosinewave( self, x, y, timestep ):
+        my, sigma, kx, wx, phix = self.coeffs
 
-        return( (np.cos( 2 * np.pi * a *  x_shifted + 2*np.pi*b ) + 1.0) /2)
+        t = float( timestep ) * const.DT
+
+        return( np.exp(-(t-my)**2/(2*(sigma**2))) * (1.0 + np.sin( kx*float(x) + wx*t + phix))/2.0 )
     
     def update( self, i, j, timestep):
-        return( np.clip( self.cosinewave( float(i)*const.D, float(timestep)*const.DT) + const.SIGMA*self.rng.standard_normal(), 0.0, 1.0 ) )
+        return( np.clip(  self.rng.normal( self.cosinewave( i, j, timestep ), const.SIGMA), 0.0, 1.0 ) )
+

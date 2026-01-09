@@ -47,9 +47,9 @@ def step(
     rodsstate: rs.RodsState,
     dt=1/240,
     gravity=9.81,
-    mu_s=0.6,
-    mu_k=0.5,
-    compliance_n=0.0,  # 0 → hard constraints; >0 (e.g., 1e-8) allows tiny softness
+    mu_s=0.45,
+    mu_k=0.45,
+    compliance_n=0,  # 0 → hard constraints; >0 (e.g., 1e-8) allows tiny softness
     num_pos_iters=18,
     substeps=2,
     pair_margin=0.08,   # recruit near neighbors (reduces late/large penetrations)

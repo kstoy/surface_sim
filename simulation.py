@@ -1,7 +1,7 @@
 import numpy as np
 import time
 
-from constants import *
+import constants as const
 
 import ballstate as bs
 import simcorexpbd as sc
@@ -11,12 +11,13 @@ import rodstate as rs
 def simulation( coeffs, visualization = True ):
     rodsstate = rs.RodsState( coeffs )
     rodsstate.settimestep( 0 )
+    rodsstate.update()
     ballsstate = bs.BallsState( rodsstate )
 
     ballsstates = []
     rodsstates = []
 
-    for timestep in range(MAXSIMULATIONSTEPS):
+    for timestep in range(const.MAXSIMULATIONSTEPS):
         rodsstate.settimestep( timestep )
         if visualization:
             rodsstate.update()
@@ -25,10 +26,10 @@ def simulation( coeffs, visualization = True ):
         sc.step(
             ballsstate,
             rodsstate, 
-            dt=DT,
+            dt=const.DT,
             gravity=9.81,
-            mu_s=0.6, mu_k=0.5,
-            compliance_n=0.1,     # 0 = hard contact
+            mu_s=0.5, mu_k=0.5,
+            compliance_n=1e-8,     # 0 = hard contact
             num_pos_iters=10,     # tighter contact
             substeps=1,           # reduce per-substep travel
             pair_margin=0.15,
@@ -51,11 +52,13 @@ if __name__ == "__main__":
     #print("done")
     #print("Simulation complete - time elapsed: " + str( end - start ))
 
+    const.NBALL = 100
+
     print("simulation running with visualization...", end="")
     start = time.time()
-    rodsstates, ballsstates, ballsradiuses = simulation( [0.04503895702597731 , 7.683522393094351 , 4.736916878368619 , 4.5877588162934915 , 1.9889974763801117 , 0.48310720429130705 , 22.17177305664314 , 0.550845706248993 , 1.3991082573092521 , -17.4980038495596 , -0.11203820166594919 , 4.578667237144929 , -3.0151594469383847 , -11.705988503439162 , 9.075713306104888 ], visualization=True )
+    rodsstates, ballsstates, ballsradiuses = simulation( [ 0.29266049,  0.85611358, -2.24317114,  1.36182964, 0.4858719 ] , visualization=True )
     end = time.time()
-    print("done")
+    print("done")   
     print("Simulation complete - time elapsed: " + str( end - start ))
 
 

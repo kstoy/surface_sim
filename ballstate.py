@@ -17,23 +17,18 @@ class BallsState:
 
         v = np.zeros((N,3), float)
         w = np.zeros((N,3), float)
-        R = rng.uniform(0.05, 0.1, size=N)
+        R = rng.uniform(0.05, 0.15, size=N) # np.array( [0.05] * N ) 
         m = 4/3*np.pi*np.power( R, 3 )
 
-        r = np.array([
-            [ 1.5, 1.5, 0.0 ],
-            [ 4.5, 0.5, 0.0 ],
-            [ 0.5, 4.5, 0.0 ],
-            [ 4.5, 4.5, 0.0 ],
-            [ 2.5, 4.5, 0.0 ],
-        ])[0:N]
-
-        r[:,0] += rng.uniform(-0.01, 0.01, size=N)
-        r[:,1] += rng.uniform(-0.01, 0.01, size=N)
+        r = np.empty((N,3), float )
+        #r[:,0] = rng.normal( 0.5, const.SIGMA, size=N)
+        #r[:,1] = rng.normal( 0.5, const.SIGMA, size=N)
+        r[:,0] = rng.uniform(0.0, const.GRIDSIZEX - 1, size= N)
+        r[:,1] = rng.uniform( 0.0, const.GRIDSIZEY - 1, size = N)
 
         for i in range(N):
             z, _, _ = rodstate.surfacejet( r[i,0], r[i,1] )
-            r[i,2] = R[i] + z
+            r[i,2] = R[i] + z + 0.01
 
         for i in range(N):
             for j in range(i):

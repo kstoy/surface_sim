@@ -1,7 +1,7 @@
 import numpy as np
 
 from constants import *
-from neuralnetworkcontroller import neuralnetworkcontroller as controller
+from simplecosinewavecontroller import simplecosinewavecontroller as controller
 import catenarysurface 
 
 class RodsState:
@@ -28,7 +28,6 @@ class RodsState:
         # surface control 
         for i in range(GRIDSIZEX):
             for j in range(GRIDSIZEY):
-                t = float(self.timestep)*DT
                 self.rods[i][j][2] = self.controller.update( i, j, self.timestep )
 
     def positiontoindex( self, x, y ):

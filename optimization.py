@@ -10,9 +10,9 @@ def fitness( cosinewavecoefficients ):
 
     _ , ballspaths, _ = sim.simulation( array( cosinewavecoefficients ), visualization=False )
 
-
     for ballpositions in ballspaths:
-        fitness += sum( fabs( 2.5 - ballpositions[:,0] ) + fabs( 0.5 - ballpositions[:,1] ) + fabs( ballpositions[:,2] )  )
+        for ballposition in ballpositions:
+            fitness +=  fabs( float( const.GRIDSIZEX ) - 1.5 - ballposition[0] )
     return( fitness )
 
 def printresult( result ):
@@ -29,9 +29,9 @@ def thecallback(intermediate_result: OptimizeResult):
         raise StopIteration
 
 if __name__ == '__main__':
-    bounds = [(-100,100)]*const.MAXCOEFF
+    bounds = [(-25,25)]*const.MAXCOEFF
 
-    result = differential_evolution(fitness, bounds, workers=10, polish=False, updating='deferred', callback=thecallback, tol= 0.1 )
+    result = differential_evolution(fitness, bounds, workers=10, polish=False, updating='deferred', callback=thecallback, tol= 0.01 )
 
     print( "Final result:")
     printresult( result )
